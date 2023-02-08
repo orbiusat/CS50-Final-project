@@ -81,6 +81,11 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'cookbook.User'
+
+LOGIN_URL='/login'
+LOGIN_REDIRECT_URL='/login'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
