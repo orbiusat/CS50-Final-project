@@ -11,7 +11,7 @@ from .models import User
 @login_required
 def index(request):
     return render(request, 'cookbook/index.html')
-    
+
 @login_required
 def ingredients(request):
     return render(request, 'cookbook/ingredients.html')
@@ -54,7 +54,8 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(request, "cookbook/login.html", {
-                "message": "Passwords must match."
+                "message": "Passwords must match.",
+                'register': True
             })
 
         # Attempt to create new user
@@ -63,7 +64,8 @@ def register(request):
             user.save()
         except IntegrityError:
             return render(request, "cookbook/login.html", {
-                "message": "Username already taken."
+                "message": "Username already taken.",
+                'register': True
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))

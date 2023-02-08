@@ -162,8 +162,24 @@ body {
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    width: 35rem;
+    width: 90%;
     border-radius: 10px;
+}
+
+@media (max-width: 75em) {
+    #login-pic-container {
+        display: none;
+    }
+
+    #login-container {
+        width: 100%;
+    }
+}
+
+@media (max-width: 36rem){
+    .login-form {
+        width: 90%;
+    }
 }
 
 .gr-input {
@@ -207,4 +223,10 @@ body {
 
 .link-btn:hover {
     border-bottom: 2px solid darkolivegreen;
+}
+
+.error-p {
+    font-family:'Courier New', Courier, monospace;
+    font-size: larger;
+    color: crimson;
 }

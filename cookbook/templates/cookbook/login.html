@@ -24,11 +24,14 @@
                     <h2 class="gr-heading">Sign in to your account</h2>
                     <input class="gr-input" autofocus type="text" name="username" placeholder="Username">
                     <input class="gr-input" type="password" name="password" placeholder="Password">
+                    {% if message %}
+                        <p class="error-p">{{ message }}</p>
+                    {% endif %}
                     <input class="gr-btn" type="submit" value="Sigh In">
                     <p class="s-text">Don't have an account yet? <button id="register-btn" type="button" class="link-btn" >Sign Up</button></p>
                 </form>
 
-                <form id="register-form" style="display: none;" class="login-form" action="{% url 'register' %}" method="post">
+                <form id="register-form" {% if register %} data-state="True" {% endif %} style="display: none;" class="login-form" action="{% url 'register' %}" method="post">
                     {% csrf_token %}
                     <div style="align-self: center;" class="logo">
                         <img src="{% static 'cookbook/cookbook-logo2.png' %}" alt="CookBook logo">
@@ -38,6 +41,9 @@
                     <input class="gr-input" type="email" name="email" placeholder="Email">
                     <input class="gr-input" type="password" name="password" placeholder="Password">
                     <input class="gr-input" type="password" name="confirmation" placeholder="Confirm password">
+                    {% if message %}
+                        <p class="error-p">{{ message }}</p>
+                    {% endif %}
                     <input class="gr-btn" type="submit" value="Register">
                     <p class="s-text">Already have an account? <button id="login-btn" type="button" class="link-btn" >Sign In</button></p>
                 </form>
