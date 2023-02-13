@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User
+from .models import User, Ingredient
 
 
 @login_required
@@ -18,7 +18,19 @@ def new(request):
 
 @login_required
 def ingredients(request):
-    return render(request, 'cookbook/ingredients.html')
+    message = ''
+    if request.method == 'POST':
+        name = request.POST['name']
+        category = request.POST['category']
+        owner = request.user
+        if (name == '') or (category == ''):
+            message = "Category and ingredient name fields cannot be empty"
+        i = Ingredient(name=name, category=category, owner=owner)
+        i.save()
+    return render(request, 'cookbook/ingredients.html', {
+        "message": message
+    })
+
 
 @login_required
 def about(request):

@@ -5,9 +5,11 @@
 {% endblock %}
 
 {% block main %}
-    <div id="new-ingredient">
-        <select class="gr-select">
-            <option>Select category</option>
+    {% load static %}
+    <form action="{% url 'ingredients' %}" method="POST" id="new-ingredient">
+        {% csrf_token %}
+        <select name="category" class="gr-select">
+            <option value="">Select category</option>
             <option value="V">Vegetables</option>
             <option value="SH">Spices and Herbs</option>
             <option value="CP">Cereals and Pulses</option>
@@ -17,9 +19,12 @@
             <option value="S">Seafood</option>
             <option value="SP">Sugar and Sugar Produts</option>
         </select>
-        <input class="gr-input" type="text" autofocus="on" placeholder="New ingredient">
-        <button class="gr-btn">Add</button>
-    </div>
-
+        <input name='name' class="gr-input" type="text" autofocus="on" placeholder="New ingredient">
+        <button class="gr-btn" type="submit">Add</button>
+    </form>
+    {% if message %}
+        <p class="error-p">{{ message }}</p>
+    {% endif %}
     <hr>
+
 {% endblock%}

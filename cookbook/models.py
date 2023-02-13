@@ -18,7 +18,7 @@ class Ingredient(models.Model):
 
     name = models.CharField(max_length=64)
     category = models.CharField(max_length=2, choices=ING_CATEGORIES)
-    owner = models.ManyToManyField(User, related_name="ingredients")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ingredients", null=True)
 
     def __str__(self):
         return f"{self.name}"
