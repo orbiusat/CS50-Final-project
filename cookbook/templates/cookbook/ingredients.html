@@ -5,5 +5,21 @@
 {% endblock %}
 
 {% block main %}
-    To Do Ingredients
-{% endblock %}
+    <div id="new-ingredient">
+        <select class="gr-select">
+            <option>Select category</option>
+            <option value="V">Vegetables</option>
+            <option value="SH">Spices and Herbs</option>
+            <option value="CP">Cereals and Pulses</option>
+            <option value="M">Meat</option>
+            <option value="D">Dairy Products</option>
+            <option value="F">Fruits</option>
+            <option value="S">Seafood</option>
+            <option value="SP">Sugar and Sugar Produts</option>
+        </select>
+        <input class="gr-input" type="text" autofocus="on" placeholder="New ingredient">
+        <button class="gr-btn">Add</button>
+    </div>
+
+    <hr>
+{% endblock%}

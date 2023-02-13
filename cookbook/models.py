@@ -3,3 +3,22 @@ from django.db import models
 
 class User(AbstractUser):
     pass
+
+class Ingredient(models.Model):
+    ING_CATEGORIES = (
+        ('V', 'Vegetables'),
+        ('SH', 'Spices and Herbs'),
+        ('CP', 'Cereals and Pulses'),
+        ('M', 'Meat'),
+        ('D', 'Dairy Products'),
+        ('F', 'Fruits'),
+        ('S', 'Seafood'),
+        ('SP', 'Sugar and Sugar Produts<')
+    )
+
+    name = models.CharField(max_length=64)
+    category = models.CharField(max_length=2, choices=ING_CATEGORIES)
+    owner = models.ManyToManyField(User, related_name="ingredients")
+
+    def __str__(self):
+        return f"{self.name}"
