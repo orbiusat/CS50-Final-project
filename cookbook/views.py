@@ -13,6 +13,10 @@ def index(request):
     return render(request, 'cookbook/index.html')
 
 @login_required
+def new(request):
+    return render(request, 'cookbook/new.html')
+
+@login_required
 def ingredients(request):
     return render(request, 'cookbook/ingredients.html')
 

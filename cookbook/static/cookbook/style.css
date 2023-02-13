@@ -127,7 +127,7 @@ body {
     font-weight: bold;
 }
 
-/* Login view */
+/* Login view and register view */
 #big-login-container {
     overflow-y: hidden;
     width: 100%;
@@ -229,4 +229,29 @@ body {
     font-family:'Courier New', Courier, monospace;
     font-size: larger;
     color: crimson;
+}
+
+/* My Recipes view */
+
+#recipes-box {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid darkblue;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.recipe-card {
+    border: 2px solid darkolivegreen;
+    width: 10rem;
+    height: 10em;
+    background-size: cover;
+}
+
+.recipe-card:hover {
+    box-shadow: rgba(85, 107, 47, 0.25) 0px 14px 28px, rgba(85, 107, 47, 0.22) 0px 10px 10px;
+}
+
+.new {
+    background-image: url(/static/cookbook/plus.png);
 }
