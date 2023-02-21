@@ -10,14 +10,14 @@
         {% csrf_token %}
         <select name="category" class="gr-select">
             <option value="">Select category</option>
-            <option value="V">Vegetables</option>
-            <option value="SH">Spices and Herbs</option>
-            <option value="CP">Cereals and Pulses</option>
-            <option value="M">Meat</option>
-            <option value="D">Dairy Products</option>
-            <option value="F">Fruits</option>
-            <option value="S">Seafood</option>
-            <option value="SP">Sugar and Sugar Produts</option>
+            <option value="#228B22">Vegetables</option>
+            <option value="#D3D3D3">Spices and Herbs</option>
+            <option value="#A0522D">Cereals and Pulses</option>
+            <option value="#CD5C5C">Meat</option>
+            <option value="#FFF8DC">Dairy Products</option>
+            <option value="#FFD700">Fruits</option>
+            <option value="#20B2AA">Seafood</option>
+            <option value="#F5F5F5">Sugar and Sugar Produts</option>
         </select>
         <input name='name' class="gr-input" type="text" autofocus="on" placeholder="New ingredient">
         <button class="gr-btn" type="submit">Add</button>
@@ -26,5 +26,14 @@
         <p class="error-p">{{ message }}</p>
     {% endif %}
     <hr>
-
+    <div class="ing-container">
+        {% for ing in ingredients %}
+            <div style="background-color: {{ ing.category }};" class="ing"><span class="del-ing"></span><p>{{ing.name}}</p></div>
+        {% empty %}
+            <h2 class="gr-heading">You have no ingredients</h2>
+        {% endfor %}
+        
+    </div>
+    {% csrf_token %}
+    <script src="{% static 'cookbook/ing.js' %}"></script>
 {% endblock%}

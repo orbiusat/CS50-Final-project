@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Ingredient
 
-
+ 
 @login_required
 def index(request):
     return render(request, 'cookbook/index.html')
@@ -25,11 +25,26 @@ def ingredients(request):
         owner = request.user
         if (name == '') or (category == ''):
             message = "Category and ingredient name fields cannot be empty"
-        i = Ingredient(name=name, category=category, owner=owner)
-        i.save()
+        elif Ingredient.objects.filter(name=name): 
+            message = "You already have ingredient with this name"
+        else:
+            i = Ingredient(name=name, category=category, owner=owner)
+            i.save()
+
+    ings = Ingredient.objects.filter(owner=request.user)
+    ings = ings.order_by("category")
+  
     return render(request, 'cookbook/ingredients.html', {
-        "message": message
+        "message": message,
+        "ingredients": ings
     })
+
+def delete_ing(request, name):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=400)  
+    ing = Ingredient.objects.get(name=name)
+    ing.delete()
+    return JsonResponse({"message": f"Successfully delete ingredient {name}"})
 
 
 @login_required

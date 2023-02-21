@@ -8,5 +8,6 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("about", views.about, name="about"),
     path("new", views.new, name="new"),
+    path("delete/ing/<str:name>", views.delete_ing, name="delete_ing"),
     path("ingredients", views.ingredients, name="ingredients"),
 ]
