@@ -5,28 +5,57 @@
 {% endblock %}
 
 {% block main %}
-    
-    <form class="new-form">
+
+    {% load static %}
+  
+    <form class="new-form" action="{% url 'new' %}" method="POST">
+        {% csrf_token %}
         <h2 class="gr-heading">New recipe here</h2>
         <input class="gr-input" autofocus type="text" name="Name" placeholder="Recipe name">
-        <div>
-            Photo here 
+        <div class="img-input">
+            <p>Drag & Drop image here or <span class="browse">Browse</span></p>
+            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg">
         </div>
-        <select>
+        <div class="img-container">
+            <img src="{% static 'cookbook/noimage.jpg' %}" alt="Recipe image">
+        </div>
+        <select class="gr-select" multiple>
             <option>Avacado</option>
             <option>Meat</option>
             <option>Tomato</option>
         </select>
 
-        <select>
+        <select class="gr-select">
             <option>Breakfast</option>
             <option>Lunch</option>
             <option>Dinner</option>
         </select>
         <input class="gr-input" autofocus type="number" name="servings" placeholder="Number of servings">
-        <p>Preparation time</p>
-        <p>Cooking time</p>
         <input class="gr-input" autofocus type="text" name="instruction" placeholder="Instruction">
         <input class="gr-btn" type="submit" value="Save recipe">
     </form>
+   
+    <script>
+        const input = document.querySelector(".img-input input")
+        const inputDiv = document.querySelector(".img-input")
+        const img = document.querySelector(".img-container img")
+
+        console.log(img)
+
+        
+        input.addEventListener("change", () => {
+            const file = input.files
+            img.src = URL.createObjectURL(file[0])
+
+        })
+
+        inputDiv.addEventListener("drop", (e) => {
+            console.log('something happend')
+            e.preventDefault()
+            const file = e.dataTransfer.files
+            img.src = URL.createObjectURL(file[0])
+          
+        })
+    </script>
+    
 {% endblock %}
