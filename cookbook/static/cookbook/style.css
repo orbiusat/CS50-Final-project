@@ -338,7 +338,7 @@ body {
 
 .img-input {
     width: 100%;
-    height: 150px;
+    height: 80px;
     border-radius: 5px;
     display: flex;
     justify-content: center;
@@ -358,23 +358,20 @@ body {
 }
 
 .img-container {
-    width: 60%;
     align-self: center;
-    height: 200px;
+    border-radius: 5px;
+}
+
+.img-container img {
+    max-height: 300px;
+    max-width: 300px;
+    border-radius: 5px;
+    object-fit: contain;
     border-radius: 5px;
     border: 2px solid darkolivegreen;
 }
 
-.img-container img {
-    height: 100%;
-    width: 100%;
-    border-radius: 5px;
-    object-fit: cover;
-
-}
-
 .gr-select {
-    height: 2.3rem;
     border-color: darkolivegreen;
     border-style: solid;
     font-size: larger;
@@ -383,3 +380,111 @@ body {
     border-radius: 3px;
 }
 
+.multiselect-block {
+    position: relative;
+    width: 100%;
+  }
+
+.multiselect {
+    position: relative;
+    width: 100%;
+    display: block;
+    border: 1px solid darkolivegreen;
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding: 12px 40px 10px 16px;
+}
+
+.multiselect::after {
+    content: " ";
+    position: absolute;
+    background-image: url(/static/cookbook/sort-ing.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 18px;
+    height: 18px;
+    right: 10px;
+    top: 12px;
+}
+
+.multiselect[data-opened='True']::after {
+    background-image: url(/static/cookbook/close-ing.png);
+    width: 13px;
+    height: 13px;
+    right: 10px;
+    top: 15px;
+}
+
+.ing-select {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 0;
+    width: 100%;
+    border: 1px solid darkolivegreen;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    box-sizing: border-box;
+    outline-color: darkolivegreen;
+    display: none;
+}
+
+
+
+.ing-select option {
+    display: block;
+    padding: 8px 40px;
+    cursor: pointer;
+    position: relative;
+}
+
+.ing-select option::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 7px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--color);
+    border-radius: 50%;
+
+}
+
+.ing-select[multiple] {
+    overflow-y: auto;
+}
+
+
+.multiselect button {
+    position: relative;
+    padding: 7px 34px 7px 8px;
+    background: #ebe4fb;
+    border-radius: 4px;
+    margin-right: 9px;
+    margin-bottom: 5px;
+    border: none;
+}
+
+.multiselect button:hover, .field_multiselect button:focus {
+    background-color: #dbd1ee;
+}
+
+.multiselect button:after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    background: url(/static/cookbook/close.png);
+    background-size: contain;
+}
+
+.gr-textarea {
+    border-color: darkolivegreen;
+    border-style: solid;
+    font-size: larger;
+    font-family: serif;
+    outline-color: green;
+    border-radius: 3px;
+    resize: none;
+}

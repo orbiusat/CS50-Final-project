@@ -11,51 +11,53 @@
     <form class="new-form" action="{% url 'new' %}" method="POST">
         {% csrf_token %}
         <h2 class="gr-heading">New recipe here</h2>
-        <input class="gr-input" autofocus type="text" name="Name" placeholder="Recipe name">
+        <input class="gr-input" autofocus type="text" name="name" placeholder="Recipe name" {%if name %}value="{{ name }}"{% endif%}>
+        {% if message and position == 1 %}
+            <p class="error-p">{{ message }}</p>
+        {% endif %}
         <div class="img-input">
             <p>Drag & Drop image here or <span class="browse">Browse</span></p>
-            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg">
+            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg" {%if image %}value="{{ image }}"{% endif%}>
         </div>
         <div class="img-container">
-            <img src="{% static 'cookbook/noimage.jpg' %}" alt="Recipe image">
+            <img {%if image %} data-hp="True" {% else %} src="{% static 'cookbook/noimage.jpg' %}" {% endif%} alt="Recipe image">
         </div>
-        <select class="gr-select" multiple>
-            <option>Avacado</option>
-            <option>Meat</option>
-            <option>Tomato</option>
+        <div class="multiselect-block">
+            <label for="select-1" class="multiselect" data-opened="False">Ingredients</label>
+            <select name="ing" id="select-1" class="ing-select" multiple>
+                {% for ing in ingredients %}
+                    <option class="mult-option" style="--color: {{ ing.category }};" data-color="{{ ing.category }}">{{ ing.name }}</option>
+                {% endfor%}
+            </select>
+        </div>  
+        <select name="type" class="gr-select">
+            <option selected>Select dish type</option>
+            <option>Salad</option>
+            <option>Soup</option>
+            <option>Snack</option>
+            <option>Main course</option>
+            <option>Bakery</option>
+            <option>Dessert</option>
+            <option>Sauce</option>
+            <option>Beverage</option>
         </select>
+        {% if message and position == 2 %}
+            <p class="error-p">{{ message }}</p>
+        {% endif %}
 
-        <select class="gr-select">
-            <option>Breakfast</option>
-            <option>Lunch</option>
-            <option>Dinner</option>
-        </select>
-        <input class="gr-input" autofocus type="number" name="servings" placeholder="Number of servings">
-        <input class="gr-input" autofocus type="text" name="instruction" placeholder="Instruction">
+        <input class="gr-input" autofocus type="number" min="1" step="1" name="servings" placeholder="Number of servings" {%if serv %}value="{{ serv }}" {% else %} value="1" {% endif%}>
+        {% if message and position == 3  %}
+            <p class="error-p">{{ message }}</p>
+        {% endif %}
+
+        <textarea class="gr-textarea" name="instruction" placeholder="Instruction" rows=6 >{%if inst %} {{ inst }} {% endif%}</textarea>
+        {% if message and position == 4  %}
+            <p class="error-p">{{ message }}</p>
+        {% endif %}
+
         <input class="gr-btn" type="submit" value="Save recipe">
     </form>
    
-    <script>
-        const input = document.querySelector(".img-input input")
-        const inputDiv = document.querySelector(".img-input")
-        const img = document.querySelector(".img-container img")
+    <script src="{% static 'cookbook/new.js' %}"></script>
 
-        console.log(img)
-
-        
-        input.addEventListener("change", () => {
-            const file = input.files
-            img.src = URL.createObjectURL(file[0])
-
-        })
-
-        inputDiv.addEventListener("drop", (e) => {
-            console.log('something happend')
-            e.preventDefault()
-            const file = e.dataTransfer.files
-            img.src = URL.createObjectURL(file[0])
-          
-        })
-    </script>
-    
 {% endblock %}
