@@ -25,7 +25,8 @@ def new(request):
             m_position = 1
 
         image = request.POST['image']
-        print(image.name)
+        print(image)
+
         ing = request.POST.getlist('ing')
 
         type = request.POST['type']
