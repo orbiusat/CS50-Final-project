@@ -10,7 +10,20 @@ from .models import User, Ingredient, Recipe
  
 @login_required
 def index(request):
-    return render(request, 'cookbook/index.html')
+
+    recipes = Recipe.objects.filter(owner=request.user)
+    
+
+    return render(request, 'cookbook/index.html', {
+        "recipes": recipes
+    })
+
+@login_required
+def recipe(request, id):
+    recipe = Recipe.objects.get(pk=id)
+    return render (request, 'cookbook/recipe.html', {
+        "recipe": recipe
+    })
 
 @login_required
 def new(request):
@@ -59,7 +72,7 @@ def new(request):
         
 
 
-        r = Recipe(title=name, type=type, serv=serv, inst = inst)
+        r = Recipe(title=name, type=type, serv=serv, inst = inst, owner=request.user)
         r.save()
 
         for ing in new_ing:

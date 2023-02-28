@@ -17,6 +17,7 @@ class Recipe (models.Model):
     title = models.CharField(max_length=64)
     image = models.ImageField(upload_to='images', blank=True)
     ingredients = models.ManyToManyField(Ingredient, related_name="recipes", blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes", null=True)
     type = models.CharField(max_length=20)
     serv = models.IntegerField()
     inst = models.TextField()
