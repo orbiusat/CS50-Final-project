@@ -10,6 +10,7 @@
   
     <form class="new-form" action="{% url 'new' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ form.as_p }}
         <h2 class="gr-heading">New recipe here</h2>
         <input class="gr-input" autofocus type="text" name="name" placeholder="Recipe name" {%if name %}value="{{ name }}"{% endif%}>
         {% if message and position == 1 %}
@@ -17,11 +18,16 @@
         {% endif %}
         <div class="img-input">
             <p>Drag & Drop image here or <span class="browse">Browse</span></p>
-            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg" {%if image %}value="{{ image }}"{% endif%}>
+            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg">
         </div>
         <div class="img-container">
-            <img {%if image %} data-hp="True" {% else %} src="{% static 'cookbook/noimage.jpg' %}" {% endif%} alt="Recipe image">
+            <img {% if image %} scr="{{ image.url }}" {% else %} src="{% static 'cookbook/noimage.jpg' %}" {% endif%} alt="Recipe image">
         </div>
+
+        {% if image %}
+            <p class="error-p">{{ image }}</p>
+        {% endif %}
+    
         <div class="multiselect-block">
             <label for="select-1" class="multiselect" data-opened="False">Ingredients</label>
             <select name="ing" id="select-1" class="ing-select" multiple>

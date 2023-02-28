@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User, Ingredient
+from .models import User, Ingredient, Recipe
 
  
 @login_required
@@ -24,10 +24,8 @@ def new(request):
             message = "Recipe name field cannot be empty"
             m_position = 1
 
-        image = request.POST['image']
-        print(image)
-
-        ing = request.POST.getlist('ing')
+        new_ing = request.POST.getlist('ing')
+        image = request.FILES.get('image', False)
 
         type = request.POST['type']
         if type == 'Select dish type':
@@ -55,9 +53,25 @@ def new(request):
                 "position": m_position,
                 "name": name,
                 "serv": serv, 
-                "inst": inst, 
-                "image": image   
+                "inst": inst,  
             })
+
+        
+
+
+        r = Recipe(title=name, type=type, serv=serv, inst = inst)
+        r.save()
+
+        for ing in new_ing:
+            i = Ingredient.objects.get(owner=request.user, name=ing)
+            r.ingredients.add(i)
+
+        if image: 
+            r.image = image
+           
+        r.save()
+
+        return HttpResponseRedirect(reverse("index"))
 
 
     
@@ -74,7 +88,7 @@ def ingredients(request):
         owner = request.user
         if (name == '') or (category == ''):
             message = "Category and ingredient name fields cannot be empty"
-        elif Ingredient.objects.filter(name=name): 
+        elif Ingredient.objects.filter(owner=request.user, name=name): 
             message = "You already have ingredient with this name"
         else:
             i = Ingredient(name=name, category=category, owner=owner)

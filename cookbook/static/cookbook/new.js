@@ -5,14 +5,6 @@ const select = document.querySelector('.ing-select')
 const multiselect = document.querySelector('.multiselect')
 const text = multiselect.innerHTML;
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('here')
-    if (img.dataset.hp === 'True') {
-        const file = input.files
-        console.log(file)
-        img.src = URL.createObjectURL(file[0])
-    }
-})
 
 input.addEventListener("change", () => {
     const file = input.files

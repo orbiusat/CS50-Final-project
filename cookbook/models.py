@@ -12,3 +12,14 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+class Recipe (models.Model):
+    title = models.CharField(max_length=64)
+    image = models.ImageField(upload_to='images', blank=True)
+    ingredients = models.ManyToManyField(Ingredient, related_name="recipes", blank=True)
+    type = models.CharField(max_length=20)
+    serv = models.IntegerField()
+    inst = models.TextField()
+
+    def __str__(self):
+        return self.title
