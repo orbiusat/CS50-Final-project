@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import User, Ingredient
+from .models import User, Ingredient, Recipe
 
  
 @login_required
@@ -14,7 +14,70 @@ def index(request):
 
 @login_required
 def new(request):
-    return render(request, 'cookbook/new.html')
+    message = ''
+    m_position = 0
+    ings = Ingredient.objects.filter(owner=request.user)
+    ings = ings.order_by("category")
+    if request.method == 'POST':
+        name = request.POST['name']
+        if name == '':
+            message = "Recipe name field cannot be empty"
+            m_position = 1
+
+        new_ing = request.POST.getlist('ing')
+        image = request.FILES.get('image', False)
+
+        type = request.POST['type']
+        if type == 'Select dish type':
+            message = "You must fill in the type of dish"
+            m_position = 2
+
+        serv = request.POST['servings']
+        if serv == '':
+            message = "Number of servings field cannot be empty"
+            m_position = 3
+        else:
+            serv = int(serv)
+            if (serv >= 1) and (serv % 10 == 0): 
+                message = "Number of servings must be whole number and greater than 0"
+                m_position = 3
+
+        inst = request.POST['instruction']
+        if inst == '':
+            message = "Instruction field cannot be empty"
+            m_position = 4
+        
+        if not message == '':
+            return render(request, 'cookbook/new.html', {
+                "message": message,
+                "position": m_position,
+                "name": name,
+                "serv": serv, 
+                "inst": inst,  
+            })
+
+        
+
+
+        r = Recipe(title=name, type=type, serv=serv, inst = inst)
+        r.save()
+
+        for ing in new_ing:
+            i = Ingredient.objects.get(owner=request.user, name=ing)
+            r.ingredients.add(i)
+
+        if image: 
+            r.image = image
+           
+        r.save()
+
+        return HttpResponseRedirect(reverse("index"))
+
+
+    
+    return render(request, 'cookbook/new.html', {
+        "ingredients": ings,
+    })
 
 @login_required
 def ingredients(request):
@@ -25,7 +88,7 @@ def ingredients(request):
         owner = request.user
         if (name == '') or (category == ''):
             message = "Category and ingredient name fields cannot be empty"
-        elif Ingredient.objects.filter(name=name): 
+        elif Ingredient.objects.filter(owner=request.user, name=name): 
             message = "You already have ingredient with this name"
         else:
             i = Ingredient(name=name, category=category, owner=owner)
