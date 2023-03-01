@@ -21,8 +21,11 @@ def index(request):
 @login_required
 def recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
+    ingredients = recipe.ingredients.all()
+    print(ingredients)
     return render (request, 'cookbook/recipe.html', {
-        "recipe": recipe
+        "recipe": recipe,
+        "ingredients": ingredients
     })
 
 @login_required

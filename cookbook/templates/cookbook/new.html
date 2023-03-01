@@ -21,7 +21,7 @@
             <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg">
         </div>
         <div class="img-container">
-            <img {% if image %} scr="{{ image.url }}" {% else %} src="{% static 'cookbook/noimage.jpg' %}" {% endif%} alt="Recipe image">
+            <img src="{% static 'cookbook/noimage.jpg' %}" alt="Recipe image">
         </div>
 
         {% if image %}

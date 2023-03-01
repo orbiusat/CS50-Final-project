@@ -7,6 +7,10 @@ body {
     height: 100vh;
 }
 
+main {
+    flex-grow: 1
+}
+
 .flex {
     display: flex;
     gap: var(--gap, 1rem);
@@ -235,11 +239,11 @@ body {
 /* My Recipes view */
 
 #recipes-box {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    gap: 2rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 
+        repeat(auto-fit, minmax(22rem, 1fr));
+
     padding: 1rem;
 }
 
@@ -526,4 +530,79 @@ body {
     outline-color: green;
     border-radius: 3px;
     resize: none;
+}
+
+/* Recipe page */
+
+#recipe {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 0 0.5rem;
+    height: 100%;
+    width: 70%;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+
+#recipe-page {
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    height: 100%;
+    
+}
+
+
+
+
+.recipe-img-container {
+    align-self: center;
+    border-radius: 5px;
+}
+
+.recipe-img-container img {
+    max-height: 400px;
+    max-width: 600px;
+    border-radius: 5px;
+    object-fit: contain;
+    border-radius: 5px;
+    border: 2px solid darkolivegreen;
+}
+
+@media (max-width: 880px) {
+    #recipe {
+        width: 100%;
+    }
+
+    .recipe-img-container img {
+        max-height: 300px;
+        max-width: 300px;
+    }
+}
+
+.recipe-ing-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem
+
+}
+
+.recipe-ing {
+    padding: 0 2rem;
+    border: 1.5px solid green;
+    font-family:'Courier New', Courier, monospace;
+    border-radius: 5px;
+    position: relative;
+}
+
+.gr-textarea-text {
+    border-style: solid;
+    font-size: larger;
+    font-family: serif;
+    resize: none;
+    outline: none;
+    border: none;
+    
 }
