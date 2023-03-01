@@ -1,26 +1,26 @@
 {% extends "cookbook/layout.html"%}
 
 {% block title %}
-    New Recipe
+    Edit {{ recipe.title }}
 {% endblock %}
 
 {% block main %}
 
     {% load static %}
   
-    <form class="new-form" action="{% url 'new' %}" method="POST" enctype="multipart/form-data">
+    <form class="new-form" action="/recipe/edit/{{ recipe.pk }}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <h2 class="gr-heading">New recipe here</h2>
-        <input class="gr-input" autofocus type="text" name="name" placeholder="Recipe name" {%if name %}value="{{ name }}"{% endif%}>
+        <h2 class="gr-heading">Edit recipe</h2>
+        <input class="gr-input" autofocus type="text" name="name" placeholder="Recipe name" value="{{ recipe.title }}">
         {% if message and position == 1 %}
             <p class="error-p">{{ message }}</p>
         {% endif %}
         <div class="img-input">
             <p>Drag & Drop image here or <span class="browse">Browse</span></p>
-            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg">
+            <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg" value="{{ recipe.image }}">
         </div>
         <div class="img-container">
-            <img src="{% static 'cookbook/noimage.jpg' %}" alt="Recipe image">
+            <img {% if recipe.image %} src="{{ recipe.image.url }}" {% else %} src="{% static 'cookbook/noimage.jpg' %}"{% endif %} alt="Recipe image">
         </div>
 
         {% if image %}
@@ -35,16 +35,11 @@
                 {% endfor%}
             </select>
         </div>  
+
         <select name="type" class="gr-select">
-            <option selected>Select dish type</option>
-            <option>Salad</option>
-            <option>Soup</option>
-            <option>Snack</option>
-            <option>Main course</option>
-            <option>Bakery</option>
-            <option>Dessert</option>
-            <option>Sauce</option>
-            <option>Beverage</option>
+            {% for type in types %}
+                <option {% if type == recipe.type %} selected {% endif %}>{{ type }}</option>
+            {% endfor %}
         </select>
         {% if message and position == 2 %}
             <p class="error-p">{{ message }}</p>

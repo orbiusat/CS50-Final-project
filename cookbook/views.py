@@ -8,12 +8,12 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Ingredient, Recipe
 
  
+types = {'Salad', 'Soup', 'Snack', 'Main course', 'Bakery', 'Dessert', 'Sauce', 'Beverage'}
+
 @login_required
 def index(request):
 
     recipes = Recipe.objects.filter(owner=request.user)
-    
-
     return render(request, 'cookbook/index.html', {
         "recipes": recipes
     })
@@ -22,10 +22,28 @@ def index(request):
 def recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     ingredients = recipe.ingredients.all()
-    print(ingredients)
     return render (request, 'cookbook/recipe.html', {
         "recipe": recipe,
         "ingredients": ingredients
+    })
+
+@login_required
+def delete_recipe(request, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=400)  
+
+    recipe = Recipe.objects.get(pk=id)
+    recipe.delete()
+    return HttpResponseRedirect(reverse("index"))
+
+@login_required
+def edit (request, id):
+    recipe = Recipe.objects.get(pk=id)
+    ingredients = recipe.ingredients.all()
+    return render (request, 'cookbook/edit.html', {
+        "recipe": recipe,
+        "ingredients": ingredients,
+        "types": types
     })
 
 @login_required
@@ -121,7 +139,7 @@ def ingredients(request):
 def delete_ing(request, name):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=400)  
-    ing = Ingredient.objects.get(name=name)
+    ing = Ingredient.objects.get(name=name, owner=request.user)
     ing.delete()
     return JsonResponse({"message": f"Successfully delete ingredient {name}"})
 

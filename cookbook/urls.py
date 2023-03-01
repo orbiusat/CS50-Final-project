@@ -10,5 +10,7 @@ urlpatterns = [
     path("new", views.new, name="new"),
     path("delete/ing/<str:name>", views.delete_ing, name="delete_ing"),
     path("recipe/<int:id>", views.recipe, name="recipe"),
+    path("delete/recipe/<int:id>", views.delete_recipe, name="delete_recipe"),
+    path("recipe/edit/<int:id>", views.edit, name="edit"),
     path("ingredients", views.ingredients, name="ingredients"),
 ]
