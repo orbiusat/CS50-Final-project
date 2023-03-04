@@ -6,6 +6,10 @@ const multiselect = document.querySelector('.multiselect')
 const text = multiselect.innerHTML;
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    AppendSelectBtn()
+})
+
 input.addEventListener("change", () => {
     const file = input.files
     img.src = URL.createObjectURL(file[0])
@@ -29,7 +33,9 @@ document.querySelector('.multiselect').onclick = () => {
     }
 }
 
-select.onchange = () => {
+select.onchange = () => AppendSelectBtn()
+
+function AppendSelectBtn() {
     let selectedOptions = select.selectedOptions
     multiselect.innerHTML = "";
     for (let option of selectedOptions) {

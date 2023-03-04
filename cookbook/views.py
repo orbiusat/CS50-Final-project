@@ -39,20 +39,78 @@ def delete_recipe(request, id):
 @login_required
 def edit (request, id):
     recipe = Recipe.objects.get(pk=id)
-    ingredients = recipe.ingredients.all()
+    ingredients = Ingredient.objects.filter(owner=request.user)
+    current_ing = recipe.ingredients.all()
+
+    if request.method == 'POST':
+        message = ''
+        m_position = 0
+        name = request.POST['name']
+        if name == '':
+            message = "Recipe name field cannot be empty"
+            m_position = 1
+
+        new_ing = request.POST.getlist('ing')
+        image = request.FILES.get('image', False)
+        type = request.POST['type']
+
+        serv = request.POST['servings']
+        if serv == '':
+            message = "Number of servings field cannot be empty"
+            m_position = 3
+        else:
+            serv = int(serv)
+            if (serv >= 1) and (serv % 10 == 0): 
+                message = "Number of servings must be whole number and greater than 0"
+                m_position = 3
+
+        inst = request.POST['instruction']
+        if inst == '':
+            message = "Instruction field cannot be empty"
+            m_position = 4
+        
+        if not message == '':
+            return render(request, 'cookbook/edit.html', {
+                "message": message,
+                "position": m_position,
+                "recipe": recipe,
+                "types": types,
+                "ingredients": ingredients,
+                "current_ing": current_ing,
+              
+            })
+
+        recipe.title = name
+        recipe.type = type
+        recipe.serv = serv
+        recipe.inst = inst 
+
+        recipe.ingredients.clear()
+        for ing in new_ing:
+            i = Ingredient.objects.get(owner=request.user, name=ing)
+            recipe.ingredients.add(i)
+        if image: 
+            recipe.image = image  
+        recipe.save()
+
+        return HttpResponseRedirect(f"/recipe/{id}")
+
+
     return render (request, 'cookbook/edit.html', {
         "recipe": recipe,
         "ingredients": ingredients,
-        "types": types
+        "types": types,
+        "current_ing": current_ing
     })
 
 @login_required
 def new(request):
-    message = ''
-    m_position = 0
     ings = Ingredient.objects.filter(owner=request.user)
     ings = ings.order_by("category")
+
     if request.method == 'POST':
+        message = ''
+        m_position = 0
         name = request.POST['name']
         if name == '':
             message = "Recipe name field cannot be empty"
@@ -88,27 +146,20 @@ def new(request):
                 "name": name,
                 "serv": serv, 
                 "inst": inst,  
+                "ingredients": ings
             })
-
-        
-
 
         r = Recipe(title=name, type=type, serv=serv, inst = inst, owner=request.user)
         r.save()
-
         for ing in new_ing:
             i = Ingredient.objects.get(owner=request.user, name=ing)
             r.ingredients.add(i)
-
         if image: 
-            r.image = image
-           
+            r.image = image  
         r.save()
-
         return HttpResponseRedirect(reverse("index"))
 
 
-    
     return render(request, 'cookbook/new.html', {
         "ingredients": ings,
     })

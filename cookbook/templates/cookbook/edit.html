@@ -15,23 +15,22 @@
         {% if message and position == 1 %}
             <p class="error-p">{{ message }}</p>
         {% endif %}
+
         <div class="img-input">
             <p>Drag & Drop image here or <span class="browse">Browse</span></p>
             <input type="file" name="image" class="file" accept="image/png, image/jpeg, image/jpg" value="{{ recipe.image }}">
         </div>
-        <div class="img-container">
-            <img {% if recipe.image %} src="{{ recipe.image.url }}" {% else %} src="{% static 'cookbook/noimage.jpg' %}"{% endif %} alt="Recipe image">
-        </div>
 
-        {% if image %}
-            <p class="error-p">{{ image }}</p>
-        {% endif %}
+        <div class="img-container">
+            <img {% if recipe.image %} src="{{ recipe.image.url }}" {% elif image %} scr="{{ recipe.image.url }}" {% else %} src="{% static 'cookbook/noimage.jpg' %}"{% endif %} alt="Recipe image">
+        </div>
     
         <div class="multiselect-block">
             <label for="select-1" class="multiselect" data-opened="False">Ingredients</label>
             <select name="ing" id="select-1" class="ing-select" multiple>
                 {% for ing in ingredients %}
-                    <option class="mult-option" style="--color: {{ ing.category }};" data-color="{{ ing.category }}">{{ ing.name }}</option>
+                    <option class="mult-option" style="--color: {{ ing.category }};" data-color="{{ ing.category }}" 
+                    {% if ing in current_ing %} selected {% endif %}>{{ ing.name }}</option>
                 {% endfor%}
             </select>
         </div>  
@@ -45,17 +44,17 @@
             <p class="error-p">{{ message }}</p>
         {% endif %}
 
-        <input class="gr-input" autofocus type="number" min="1" step="1" name="servings" placeholder="Number of servings" {%if serv %}value="{{ serv }}" {% else %} value="1" {% endif%}>
+        <input class="gr-input" autofocus type="number" min="1" step="1" name="servings" placeholder="Number of servings" {%if serv %}value="{{ serv }}" {% else %} value="{{ recipe.serv }}" {% endif%}>
         {% if message and position == 3  %}
             <p class="error-p">{{ message }}</p>
         {% endif %}
 
-        <textarea class="gr-textarea" name="instruction" placeholder="Instruction" rows=6 >{%if inst %} {{ inst }} {% endif%}</textarea>
+        <textarea class="gr-textarea" name="instruction" placeholder="Instruction" rows=6 >{{ recipe.inst }}</textarea>
         {% if message and position == 4  %}
             <p class="error-p">{{ message }}</p>
         {% endif %}
 
-        <input class="gr-btn" type="submit" value="Save recipe">
+        <input class="gr-btn" type="submit" value="Save changes">
     </form>
    
     <script src="{% static 'cookbook/new.js' %}"></script>
