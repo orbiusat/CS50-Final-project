@@ -7,52 +7,63 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Ingredient, Recipe
 
- 
-types = {'Salad', 'Soup', 'Snack', 'Main course', 'Bakery', 'Dessert', 'Sauce', 'Beverage'}
+# Types of dish, user can choose for recipes. It goes straight to templates, where it fill select box
+types = {'Salad', 'Soup', 'Snack', 'Main course', 'Bakery', 'Dessert', 'Sauce', 'Beverage', 'Bread'}
 
+
+# Render index page
 @login_required
 def index(request):
-
     recipes = Recipe.objects.filter(owner=request.user)
     return render(request, 'cookbook/index.html', {
         "recipes": recipes
     })
 
+# Render recipe page
 @login_required
 def recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     ingredients = recipe.ingredients.all()
+    ingredients = ingredients.order_by("category")
     return render (request, 'cookbook/recipe.html', {
         "recipe": recipe,
         "ingredients": ingredients
     })
 
+# API for deleting recipes
 @login_required
 def delete_recipe(request, id):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=400)  
-
     recipe = Recipe.objects.get(pk=id)
     recipe.delete()
     return HttpResponseRedirect(reverse("index"))
 
+# Render page for adding new recipe
 @login_required
-def edit (request, id):
-    recipe = Recipe.objects.get(pk=id)
-    ingredients = Ingredient.objects.filter(owner=request.user)
-    current_ing = recipe.ingredients.all()
+def new(request):
 
+    # Getting list of ingredients and setting default type of dish for template
+    ings = Ingredient.objects.filter(owner=request.user)
+    ings = ings.order_by("category")
+    cur_type = 'Select dish type'
+
+    # Adding new recipe into database
     if request.method == 'POST':
+        # Var for message if something goes wrong, and it positon on a page. 
         message = ''
         m_position = 0
+
+        # Checking that user fill all necessary fields
         name = request.POST['name']
         if name == '':
             message = "Recipe name field cannot be empty"
             m_position = 1
 
-        new_ing = request.POST.getlist('ing')
-        image = request.FILES.get('image', False)
-        type = request.POST['type']
+        cur_type = request.POST['type']
+        if cur_type == 'Select dish type':
+            message = "You must fill in the type of dish"
+            m_position = 2
 
         serv = request.POST['servings']
         if serv == '':
@@ -60,7 +71,7 @@ def edit (request, id):
             m_position = 3
         else:
             serv = int(serv)
-            if (serv >= 1) and (serv % 10 == 0): 
+            if (serv >= 1) and not(serv % 1 == 0): 
                 message = "Number of servings must be whole number and greater than 0"
                 m_position = 3
 
@@ -69,6 +80,84 @@ def edit (request, id):
             message = "Instruction field cannot be empty"
             m_position = 4
         
+        # Getting list of ingredients and image if user upload it
+        new_ing = request.POST.getlist('ing')
+        image = request.FILES.get('image', False)
+        
+        # If user does't fill some info, reload page with prefilled fields and error message
+        if not message == '':
+            return render(request, 'cookbook/new.html', {
+                "message": message,
+                "position": m_position,
+                "name": name,
+                "serv": serv, 
+                "inst": inst,  
+                "ingredients": ings,
+                "types": types,
+                "cur_type": cur_type,
+                "current_ing": new_ing
+
+            })
+
+        # Adding new recipe into database
+        r = Recipe(title=name, type=cur_type, serv=serv, inst = inst, owner=request.user)
+        r.save()
+
+        # Adding list of ingredietns and image into newly created recipe
+        for ing in new_ing:
+            i = Ingredient.objects.get(owner=request.user, name=ing)
+            r.ingredients.add(i)
+        if image: 
+            r.image = image  
+        r.save()
+        return HttpResponseRedirect(reverse("index"))
+
+    # Render page if method  = GET
+    return render(request, 'cookbook/new.html', {
+        "ingredients": ings,
+        "types": types,
+        "cur_type": cur_type
+    })
+
+# Render page for adding new recipe
+@login_required
+def edit (request, id):
+    # Getting list of ingredients for template
+    recipe = Recipe.objects.get(pk=id)
+    ingredients = Ingredient.objects.filter(owner=request.user)
+    current_ing = recipe.ingredients.all()
+
+    # Handling save changes button
+    if request.method == 'POST':
+        # Var for message if something goes wrong, and it positon on a page. 
+        message = ''
+        m_position = 0
+
+        name = request.POST['name']
+        if name == '':
+            message = "Recipe name field cannot be empty"
+            m_position = 1
+
+        serv = request.POST['servings']
+        if serv == '':
+            message = "Number of servings field cannot be empty"
+            m_position = 3
+        else:
+            serv = int(serv)
+            if (serv >= 1) and not(serv % 1 == 0): 
+                message = "Number of servings must be whole number and greater than 0"
+                m_position = 3
+
+        inst = request.POST['instruction']
+        if inst == '':
+            message = "Instruction field cannot be empty"
+            m_position = 4
+
+        new_ing = request.POST.getlist('ing')
+        image = request.FILES.get('image', False)
+        type = request.POST['type']
+
+        # If user does't fill some info, reload page with error message
         if not message == '':
             return render(request, 'cookbook/edit.html', {
                 "message": message,
@@ -80,22 +169,25 @@ def edit (request, id):
               
             })
 
+        # Change recipe data with new one
         recipe.title = name
         recipe.type = type
         recipe.serv = serv
         recipe.inst = inst 
 
         recipe.ingredients.clear()
+        
         for ing in new_ing:
             i = Ingredient.objects.get(owner=request.user, name=ing)
             recipe.ingredients.add(i)
+
         if image: 
             recipe.image = image  
         recipe.save()
 
         return HttpResponseRedirect(f"/recipe/{id}")
 
-
+    # Render page if method  = GET
     return render (request, 'cookbook/edit.html', {
         "recipe": recipe,
         "ingredients": ingredients,
@@ -103,70 +195,12 @@ def edit (request, id):
         "current_ing": current_ing
     })
 
-@login_required
-def new(request):
-    ings = Ingredient.objects.filter(owner=request.user)
-    ings = ings.order_by("category")
-
-    if request.method == 'POST':
-        message = ''
-        m_position = 0
-        name = request.POST['name']
-        if name == '':
-            message = "Recipe name field cannot be empty"
-            m_position = 1
-
-        new_ing = request.POST.getlist('ing')
-        image = request.FILES.get('image', False)
-
-        type = request.POST['type']
-        if type == 'Select dish type':
-            message = "You must fill in the type of dish"
-            m_position = 2
-
-        serv = request.POST['servings']
-        if serv == '':
-            message = "Number of servings field cannot be empty"
-            m_position = 3
-        else:
-            serv = int(serv)
-            if (serv >= 1) and (serv % 10 == 0): 
-                message = "Number of servings must be whole number and greater than 0"
-                m_position = 3
-
-        inst = request.POST['instruction']
-        if inst == '':
-            message = "Instruction field cannot be empty"
-            m_position = 4
-        
-        if not message == '':
-            return render(request, 'cookbook/new.html', {
-                "message": message,
-                "position": m_position,
-                "name": name,
-                "serv": serv, 
-                "inst": inst,  
-                "ingredients": ings
-            })
-
-        r = Recipe(title=name, type=type, serv=serv, inst = inst, owner=request.user)
-        r.save()
-        for ing in new_ing:
-            i = Ingredient.objects.get(owner=request.user, name=ing)
-            r.ingredients.add(i)
-        if image: 
-            r.image = image  
-        r.save()
-        return HttpResponseRedirect(reverse("index"))
-
-
-    return render(request, 'cookbook/new.html', {
-        "ingredients": ings,
-    })
-
+# Render ingredients page 
 @login_required
 def ingredients(request):
     message = ''
+
+    # Adding new ingredient 
     if request.method == 'POST':
         name = request.POST['name']
         category = request.POST['category']
@@ -179,6 +213,7 @@ def ingredients(request):
             i = Ingredient(name=name, category=category, owner=owner)
             i.save()
 
+    # Getting ingredienst for template 
     ings = Ingredient.objects.filter(owner=request.user)
     ings = ings.order_by("category")
   
@@ -187,6 +222,7 @@ def ingredients(request):
         "ingredients": ings
     })
 
+# API for deleting ingredients
 def delete_ing(request, name):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=400)  
@@ -194,7 +230,7 @@ def delete_ing(request, name):
     ing.delete()
     return JsonResponse({"message": f"Successfully delete ingredient {name}"})
 
-
+# Render about page
 @login_required
 def about(request):
     return render(request, 'cookbook/about.html')

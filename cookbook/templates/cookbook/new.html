@@ -22,30 +22,26 @@
         <div class="img-container">
             <img src="{% static 'cookbook/noimage.jpg' %}" alt="Recipe image">
         </div>
-
-        {% if image %}
-            <p class="error-p">{{ image }}</p>
-        {% endif %}
     
         <div class="multiselect-block">
             <label for="select-1" class="multiselect" data-opened="False">Ingredients</label>
             <select name="ing" id="select-1" class="ing-select" multiple>
                 {% for ing in ingredients %}
-                    <option class="mult-option" style="--color: {{ ing.category }};" data-color="{{ ing.category }}">{{ ing.name }}</option>
+                    <option class="mult-option" style="--color: {{ ing.category }};" data-color="{{ ing.category }}" 
+                    {% if ing.name in current_ing %} selected {% endif %}>{{ ing.name }}</option>
                 {% endfor%}
             </select>
         </div>  
+
         <select name="type" class="gr-select">
-            <option selected>Select dish type</option>
-            <option>Salad</option>
-            <option>Soup</option>
-            <option>Snack</option>
-            <option>Main course</option>
-            <option>Bakery</option>
-            <option>Dessert</option>
-            <option>Sauce</option>
-            <option>Beverage</option>
+            {% if cur_type == 'Select dish type' %}
+                <option selected>Select dish type</option>
+            {% endif %}
+            {% for type in types %}
+                <option {% if type == cur_type %} selected {% endif %}>{{ type }}</option>
+            {% endfor %}
         </select>
+
         {% if message and position == 2 %}
             <p class="error-p">{{ message }}</p>
         {% endif %}

@@ -8,38 +8,38 @@
 
     {% load static %}
     {% csrf_token %}
-    <div id="recipe-page">
-        <div id="recipe">
-            <div class="name-group">
-                <h1 id='name' data-name="{{ recipe.title }}" data-id="{{ recipe.pk }}" style="text-align: center" class="gr-heading">{{ recipe.title }} ({{ recipe.type}})</h1>
-                <a href="/recipe/edit/{{ recipe.pk }}"><button id="edit-btn"></button></a>
-                <button id="delete-btn"></button>
-            </div>
-                            
-            <div class="recipe-img-container">
-                {% if recipe.image == "" %}
-                    <img src="{% static 'cookbook/no-image.png' %}" alt="Recipe image">
-                {% else %}
-                    <img src="{{ recipe.image.url }}" alt="Recipe image">
-                {% endif %}
-            </div>
 
-            
-
-            <h2 class="gr-heading">Number of servings: {{ recipe.serv}}</h2>
-            <h2 class="gr-heading">Ingredients</h2>
-            <div class="recipe-ing-container">
-                {% for ing in ingredients %}
-                    <div style="background-color: {{ ing.category }}" class="recipe-ing"><p>{{ing.name}}</p></div>
-                {% empty %}
-                    <h2 class="gr-heading">You have no ingredients</h2>
-                {% endfor %}
-            </div>
-        
-            <h2 class="gr-heading">Instruction</h2>
-            <textarea class="gr-textarea-text" readonly>{{ recipe.inst }}</textarea>
+    <div id="recipe">
+        <div class="name-group">
+            <h1 id='name' data-name="{{ recipe.title }}" data-id="{{ recipe.pk }}" style="text-align: center" class="gr-heading">{{ recipe.title }} ({{ recipe.type}})</h1>
+            <a href="/recipe/edit/{{ recipe.pk }}"><button id="edit-btn"></button></a>
+            <button id="delete-btn"></button>
         </div>
+                        
+        <div class="recipe-img-container">
+            {% if recipe.image == "" %}
+                <img src="{% static 'cookbook/no-image.png' %}" alt="Recipe image">
+            {% else %}
+                <img src="{{ recipe.image.url }}" alt="Recipe image">
+            {% endif %}
+        </div>
+
+        
+
+        <h2 class="gr-heading">Number of servings: {{ recipe.serv}}</h2>
+        <h2 class="gr-heading">Ingredients</h2>
+        <div class="recipe-ing-container">
+            {% for ing in ingredients %}
+                <div style="background-color: {{ ing.category }}" class="recipe-ing"><p>{{ing.name}}</p></div>
+            {% empty %}
+                <h2 class="gr-heading">You have no ingredients</h2>
+            {% endfor %}
+        </div>
+    
+        <h2 class="gr-heading">Instruction</h2>
+        <textarea class="gr-textarea-text" readonly>{{ recipe.inst }}</textarea>
     </div>
+
     <script src="{% static 'cookbook/recipe.js' %}"></script>
     
 

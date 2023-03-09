@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # This library removes images from the file system when their corresponding database entry is deleted.
     'django_cleanup.apps.CleanupConfig'
 ]
 
@@ -85,6 +86,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'cookbook.User'
 
+# All login redirects lead to this page
 LOGIN_URL='/login'
 LOGIN_REDIRECT_URL='/login'
 
